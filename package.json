@@ -1,0 +1,23 @@
+{
+  "name": "gh_contributions",
+  "version": "1.0.0",
+  "description": "Fill GH comtribution field.",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/d2bit/gh_contributions.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/d2bit/gh_contributions/issues"
+  },
+  "homepage": "https://github.com/d2bit/gh_contributions#readme",
+  "devDependencies": {
+    "jest": "^23.1.0"
+  }
+}
