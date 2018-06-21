@@ -19,5 +19,8 @@
   "homepage": "https://github.com/d2bit/gh_contributions#readme",
   "devDependencies": {
     "jest": "^23.1.0"
+  },
+  "dependencies": {
+    "dayjs": "^1.6.9"
   }
 }

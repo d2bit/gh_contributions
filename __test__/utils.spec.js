@@ -1,6 +1,6 @@
-const { writeLetter, writeWord } = require('../index')
+const { transformLetter, transformWord } = require('../utils')
 
-describe('writeLetter', () => {
+describe('transformLetter', () => {
   test('it fills an array with a letter', () => {
     const letter = 'd'
     expectedLetter = [
@@ -13,7 +13,7 @@ describe('writeLetter', () => {
       [0, 1, 1, 1],
     ]
 
-    expect(writeLetter(letter)).toEqual(expectedLetter)
+    expect(transformLetter(letter).toArray()).toEqual(expectedLetter)
   })
 
   test('it fills an array with a question mark when cannot paint the letter', () => {
@@ -28,11 +28,11 @@ describe('writeLetter', () => {
       [0, 0, 1, 0],
     ]
 
-    expect(writeLetter(letter)).toEqual(expectedLetter)
+    expect(transformLetter(letter).toArray()).toEqual(expectedLetter)
   })
 })
 
-describe('writeWord', () => {
+describe('transformWord', () => {
   test('add space between letters', () => {
     const word = 'db'
     expectedWord = [
@@ -45,9 +45,9 @@ describe('writeWord', () => {
       [0, 1, 1, 1, 0, 1, 1, 1, 0],
     ]
 
-    expect(writeWord(word)).toEqual(expectedWord)
+    expect(transformWord(word).toArray()).toEqual(expectedWord)
   })
 })
 
-const word = writeWord('d2bit')
-console.log(word.map(row => row.map(pixel => pixel || ' ').join('')).join('\n'))
+const word = transformWord('d2bit')
+console.log(word.toString())
