@@ -1,11 +1,11 @@
 const childProcess = require('child_process')
 const dayjs = require('dayjs')
-const { writeWord } = require('./utils')
+const { transformWord } = require('./utils')
 
 function main() {
   let error = false
   const word = process.argv[2] || 'd2bit'
-  const initialDateStr = '2017-08-01'
+  const initialDateStr = '2017-07-01'
 
   childProcess.execSync('git rev-parse', (err, stdout, stderr) => {
     if (err) {
@@ -19,24 +19,44 @@ function main() {
   }
 
   const initialDate = dayjs(initialDateStr).startOf('week')
-  const wordArray = writeWord(word)
-  wordArray.forEach((row, day) => {
-    row.forEach((col, week) => {
-      if (!col) {
+  const wordLetters = transformWord(word).letters
+  let currentWeek = 0
+  const commitDates = wordLetters.reduce((acc, letter) => {
+    // if (currentWeek !== 0) {
+    //   currentWeek++
+    // }
+    const letterArr = letter.toArray()
+    for (let letterWeek = 0; letterWeek < letterArr.length; letterWeek++) {
+      currentWeek += 1
+      for (let weekDay = 0; weekDay < 7; weekDay++) {
+        if (letterArr[weekDay][letterWeek]) {
+          const date = initialDate
+            .add(currentWeek, 'weeks')
+            .add(weekDay, 'days')
+          const dateStr = date.format('YYYY.MM.DD')
+          const msg = `${date.format('dddd')} on week #${letterWeek +
+            1} of letter ${letter.letter} - ${dateStr}`
+          acc.push({
+            date,
+            dateStr,
+            msg,
+          })
+        }
+      }
+    }
+    return acc
+  }, [])
+  // console.log(JSON.stringify(commitDates, null, 2))
+  // return
+  commitDates.forEach(({ dateStr, msg }) => {
+    const command = commitCommand(dateStr, msg)
+    childProcess.execSync(command, (err, stdout, stderr) => {
+      if (err) {
+        console.log('Error creating commit')
+        console.error(stderr)
+        error = true
         return
       }
-      const date = initialDate.add(week, 'weeks').add(day, 'days')
-      const dateStr = date.format('YYYY.MM.DD')
-      const msg = `Commit on date ${dateStr}`
-      const command = commitCommand(dateStr, msg)
-      childProcess.execSync(command, (err, stdout, stderr) => {
-        if (err) {
-          console.log('Error creating commit')
-          console.error(stderr)
-          error = true
-          return
-        }
-      })
     })
   })
 }
