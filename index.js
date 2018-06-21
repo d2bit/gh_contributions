@@ -5,7 +5,7 @@ const { transformWord } = require('./utils')
 function main() {
   let error = false
   const word = process.argv[2] || 'd2bit'
-  const initialDateStr = '2017-07-01'
+  const initialDateStr = '2017-09-01'
 
   childProcess.execSync('git rev-parse', (err, stdout, stderr) => {
     if (err) {
@@ -18,16 +18,17 @@ function main() {
     return
   }
 
-  const initialDate = dayjs(initialDateStr).startOf('week')
+  const initialDate = dayjs(initialDateStr)
+    .startOf('week')
+    .set('hour', 16)
   const wordLetters = transformWord(word).letters
   let currentWeek = 0
   const commitDates = wordLetters.reduce((acc, letter) => {
-    // if (currentWeek !== 0) {
-    //   currentWeek++
-    // }
+    if (currentWeek !== 0) {
+      currentWeek++
+    }
     const letterArr = letter.toArray()
-    for (let letterWeek = 0; letterWeek < letterArr.length; letterWeek++) {
-      currentWeek += 1
+    for (let letterWeek = 0; letterWeek < letterArr[0].length; letterWeek++) {
       for (let weekDay = 0; weekDay < 7; weekDay++) {
         if (letterArr[weekDay][letterWeek]) {
           const date = initialDate
@@ -43,11 +44,10 @@ function main() {
           })
         }
       }
+      currentWeek += 1
     }
     return acc
   }, [])
-  // console.log(JSON.stringify(commitDates, null, 2))
-  // return
   commitDates.forEach(({ dateStr, msg }) => {
     const command = commitCommand(dateStr, msg)
     childProcess.execSync(command, (err, stdout, stderr) => {
